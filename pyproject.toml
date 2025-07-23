@@ -1,0 +1,6 @@
+[project]
+name = "llm-translator"
+version = "0.0.1"
+description = "A system for translating between human languages using an LLM"
+readme = "README.md"
+requires-python = ">=3.8"
