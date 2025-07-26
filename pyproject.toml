@@ -47,5 +47,12 @@ extend-select = [
   "RUF",  # Ruff-specific rules
 ]
 
+[tool.ruff.lint.extend-per-file-ignores]
+"src/**/*_test.py" = [
+    "S101", # Allow assert statements.
+    "D100", # Don't require docstrings on test modules.
+    "D103", # Don't require docstrings on test functions.
+]
+
 [tool.ruff.lint.pydocstyle]
 convention = "pep257"

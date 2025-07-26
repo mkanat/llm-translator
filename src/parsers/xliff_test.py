@@ -1,6 +1,7 @@
-import pytest
 import os
 from pathlib import Path
+
+import pytest
 from lxml import etree
 
 from parsers.xliff import XliffDocument
@@ -99,7 +100,7 @@ def test_to_file_roundtrip(xliff_file_path: str, tmp_path: Path):
     units1 = list(doc.get_translation_units())
     units2 = list(doc2.get_translation_units())
     assert len(units1) == len(units2)
-    for u1, u2 in zip(units1, units2):
+    for u1, u2 in zip(units1, units2, strict=True):
         assert str(u1.source) == str(u2.source)
         assert str(u1.target) == str(u2.target)
 
@@ -113,9 +114,7 @@ def _canonical_xml(tree: etree._ElementTree):  # pyright: ignore [reportPrivateU
 
 
 def test_to_file_roundtrip_xml_identical(xliff_file_path: str, tmp_path: Path):
-    """
-    Ensure that writing and re-reading produces an identical canonical XML tree.
-    """
+    """Ensure that writing and re-reading produces an identical canonical XML tree."""
     doc = XliffDocument.from_file(xliff_file_path)
     output_path = tmp_path / "canonical_roundtrip.xlf"
     doc.to_file(str(output_path))
