@@ -1,6 +1,5 @@
 import pytest
 import os
-from io import BytesIO
 from lxml import etree, objectify
 
 from parsers.xliff import XliffDocument
@@ -103,17 +102,13 @@ def test_to_file_roundtrip(xliff_file_path, tmp_path):
         assert str(u1.target) == str(u2.target)
 
 
-def _canonical_xml(root):
-    """
-    Return a canonical XML (C14N) byte string for the given objectify root,
-    removing objectify annotations.
-    """
-    objectify.deannotate(root, cleanup_namespaces=True)
-    tree = root.getroottree()
-    buf = BytesIO()
-    # include comments and use the existing docinfo
-    tree.write(buf, with_comments=True, method="c14n")
-    return buf.getvalue()
+def _canonical_xml(tree: etree.ElementTree):
+    return etree.tostring(
+        tree,
+        method="c14n2",
+        exclusive=False,
+        with_comments=True,
+    )
 
 
 def test_to_file_roundtrip_xml_identical(xliff_file_path, tmp_path):
@@ -123,8 +118,9 @@ def test_to_file_roundtrip_xml_identical(xliff_file_path, tmp_path):
     doc = XliffDocument.from_file(xliff_file_path)
     output_path = tmp_path / "canonical_roundtrip.xlf"
     doc.to_file(str(output_path))
+    written_xml = _canonical_xml(doc.root.getroottree())
 
-    doc2 = XliffDocument.from_file(str(output_path))
-    xml1 = _canonical_xml(doc.root)
-    xml2 = _canonical_xml(doc2.root)
-    assert xml1 == xml2, "Canonical XML differs after roundtrip"
+    parsed_tree = etree.parse(output_path)
+    parsed_xml = _canonical_xml(parsed_tree)
+
+    assert written_xml == parsed_xml, "Canonical XML differs after roundtrip"
