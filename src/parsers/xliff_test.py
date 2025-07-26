@@ -1,42 +1,43 @@
 import pytest
 import os
+from pathlib import Path
 from lxml import etree
 
 from parsers.xliff import XliffDocument
 
 
 @pytest.fixture
-def xliff_file_path():
+def xliff_file_path() -> str:
     return os.path.join(os.path.dirname(__file__), "testdata", "basic.xlf")
 
 
 @pytest.fixture
-def sdl_xliff_file_path():
+def sdl_xliff_file_path() -> str:
     return os.path.join(os.path.dirname(__file__), "testdata", "test_sample.sdlxliff")
 
 
-def test_from_file(xliff_file_path):
+def test_from_file(xliff_file_path: str):
     doc = XliffDocument.from_file(xliff_file_path)
     assert doc is not None
     assert doc.version == "1.2"
     assert doc.xmlns == "urn:oasis:names:tc:xliff:document:1.2"
 
 
-def test_from_file_invalid_xml(tmp_path):
+def test_from_file_invalid_xml(tmp_path: Path):
     invalid_file = tmp_path / "invalid.xlf"
     invalid_file.write_text("<xliff><unclosed-tag>")
     with pytest.raises(etree.XMLSyntaxError):
         XliffDocument.from_file(str(invalid_file))
 
 
-def test_get_files(xliff_file_path):
+def test_get_files(xliff_file_path: str):
     doc = XliffDocument.from_file(xliff_file_path)
     files = list(doc.get_files())
     assert len(files) == 1
     assert files[0].attrib["original"] == "file.ext"
 
 
-def test_get_translation_units(xliff_file_path):
+def test_get_translation_units(xliff_file_path: str):
     doc = XliffDocument.from_file(xliff_file_path)
     units = list(doc.get_translation_units())
     assert len(units) == 2
@@ -44,13 +45,13 @@ def test_get_translation_units(xliff_file_path):
     assert str(units[1].target) == "Une autre chaîne"
 
 
-def test_sdlxliff_basic_metadata(sdl_xliff_file_path):
+def test_sdlxliff_basic_metadata(sdl_xliff_file_path: str):
     doc = XliffDocument.from_file(sdl_xliff_file_path)
     assert doc.version == "1.2"
     assert doc.xmlns == "urn:oasis:names:tc:xliff:document:1.2"
 
 
-def test_sdlxliff_unit_special_markup(sdl_xliff_file_path):
+def test_sdlxliff_unit_special_markup(sdl_xliff_file_path: str):
     doc = XliffDocument.from_file(sdl_xliff_file_path)
     units = list(doc.get_translation_units())
     assert len(units) == 2
@@ -58,14 +59,14 @@ def test_sdlxliff_unit_special_markup(sdl_xliff_file_path):
     # Source emphasis tag
     assert units[0].source.text == "Hello, "
     g = units[0].source.getchildren()[0]
-    assert g.tag.split("}")[-1] == "g"
+    assert g.tag.split("}")[-1] == "g" # pyright: ignore
     assert g.attrib["ctype"] == "x-html-em"
     assert g.text == "world"
     assert g.tail == "!"
     # Target emphasis tag
     assert units[0].target.text == "¡Hola, "
     gt = units[0].target.getchildren()[0]
-    assert gt.tag.split("}")[-1] == "g"
+    assert gt.tag.split("}")[-1] == "g" # pyright: ignore
     assert gt.attrib["ctype"] == "x-html-em"
     assert gt.text == "mundo"
     assert gt.tail == "!"
@@ -73,7 +74,7 @@ def test_sdlxliff_unit_special_markup(sdl_xliff_file_path):
     assert str(units[0].note) == "Greeting with emphasis"
 
 
-def test_sdlxliff_first_unit_alt_trans(sdl_xliff_file_path):
+def test_sdlxliff_first_unit_alt_trans(sdl_xliff_file_path: str):
     doc = XliffDocument.from_file(sdl_xliff_file_path)
     units = list(doc.get_translation_units())
     assert len(units) == 2
@@ -84,7 +85,7 @@ def test_sdlxliff_first_unit_alt_trans(sdl_xliff_file_path):
     assert str(alt.target) == "Hola mundo!"
 
 
-def test_to_file_roundtrip(xliff_file_path, tmp_path):
+def test_to_file_roundtrip(xliff_file_path: str, tmp_path: Path):
     doc = XliffDocument.from_file(xliff_file_path)
     output_path = tmp_path / "roundtrip.xlf"
     doc.to_file(str(output_path))
@@ -103,16 +104,15 @@ def test_to_file_roundtrip(xliff_file_path, tmp_path):
         assert str(u1.target) == str(u2.target)
 
 
-def _canonical_xml(tree: etree.ElementTree):
+def _canonical_xml(tree: etree._ElementTree): # pyright: ignore [reportPrivateUsage]
     return etree.tostring(
         tree,
         method="c14n2",
-        exclusive=False,
         with_comments=True,
     )
 
 
-def test_to_file_roundtrip_xml_identical(xliff_file_path, tmp_path):
+def test_to_file_roundtrip_xml_identical(xliff_file_path: str, tmp_path: Path):
     """
     Ensure that writing and re-reading produces an identical canonical XML tree.
     """
