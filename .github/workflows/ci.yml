@@ -22,6 +22,4 @@ jobs:
 
     - uses: astral-sh/ruff-action@v3
     - run: ruff format --check --diff
-
-    - name: Type-check with Pyright
-      run: uv run pyright
+    - run: uv run pyright
