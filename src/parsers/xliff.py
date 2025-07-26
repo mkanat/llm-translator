@@ -54,7 +54,7 @@ class XliffDocument:
         """Get default namespace from root attributes."""
         return self.root.attrib.get("xmlns")
 
-    def get_translation_units(self) -> Generator[objectify.ObjectifiedElement]:
+    def get_translation_units(self) ->Generator[objectify.ObjectifiedElement, None, None]:
         """Yield all translation units in the document.
 
         Yields:
@@ -64,7 +64,7 @@ class XliffDocument:
         for file_elem in self.root.file:
             yield from file_elem.body["trans-unit"]
 
-    def get_files(self) -> Generator[objectify.ObjectifiedElement]:
+    def get_files(self) -> Generator[objectify.ObjectifiedElement, None, None]:
         """Yield all file elements in the document.
 
         Yields:
