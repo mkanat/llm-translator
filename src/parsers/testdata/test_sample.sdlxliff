@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:sdl="http://sdl.com/FileTypes/SdlXliff/1.0" version="1.2">
+  <file original="test.txt" source-language="en-US" target-language="es-ES" datatype="x-sdlfilterframework2">
+    <header>
+      <phase-group>
+        <phase phase-name="translate" process-name="translation" revision="1" tool-id="SDL Language Platform">
+          <date>2024-01-15T10:30:00</date>
+        </phase>
+      </phase-group>
+      <reference>
+        <internal-file form="base64">SGVsbG8gV29ybGQ=</internal-file>
+      </reference>
+    </header>
+    <sdl:file-info>
+      <sdl:file-properties>
+        <sdl:file-property name="SDL:FileId" value="1001"/>
+        <sdl:file-property name="SDL:CreationDate" value="2024-01-15T10:30:00"/>
+        <sdl:file-property name="SDL:LastModified" value="2024-01-15T10:35:00"/>
+      </sdl:file-properties>
+    </sdl:file-info>
+    <sdl:seg-defs>
+      <sdl:seg id="1" conf="Draft" origin="tm"/>
+      <sdl:seg id="2" conf="New" origin="manual"/>
+    </sdl:seg-defs>
+    <body>
+      <trans-unit id="1" approved="no">
+        <source>Hello, <g id="1" ctype="x-html-em">world</g>!</source>
+        <target state="translated" origin="tm" match-quality="95">¡Hola, <g id="1" ctype="x-html-em">mundo</g>!</target>
+        <note>Greeting with emphasis</note>
+        <sdl:seg-source>
+          <mrk mtype="seg" sid="1">Hello, <g id="1" ctype="x-html-em">world</g>!</mrk>
+        </sdl:seg-source>
+        <alt-trans match-quality="85" origin="tm">
+          <source>Hello, world!</source>
+          <target>Hola mundo!</target>
+        </alt-trans>
+      </trans-unit>
+      <trans-unit id="2">
+        <source>This is a test document with <g id="1" ctype="x-html-strong">formatting</g>.</source>
+        <target state="needs-translation"></target>
+        <sdl:seg-source>
+          <mrk mtype="seg" sid="2">This is a test document with <g id="1" ctype="x-html-strong">formatting</g>.</mrk>
+        </sdl:seg-source>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

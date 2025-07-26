@@ -11,6 +11,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "pyright[nodejs]>=1.1.403",
+    "pytest",
     "ruff",
     "types-lxml>=2025.3.30",
 ]
@@ -31,7 +32,6 @@ extend-select = [
   "FBT", # flake8-boolean-trap
   "A",   # flake8-builtins
   "S",   # flake8-bandit
-  "COM", # flake8-commas
   "LOG", # flake8-logging
   "G",   # flake8-logging-format
   "TCH", # flake8-type-checking
@@ -44,6 +44,13 @@ extend-select = [
   "ARG", # flake8-unused-arguments
   "DTZ", # flake8-datetimez
   "RUF",  # Ruff-specific rules
+]
+
+[tool.ruff.lint.extend-per-file-ignores]
+"src/**/*_test.py" = [
+    "S101", # Allow assert statements.
+    "D100", # Don't require docstrings on test modules.
+    "D103", # Don't require docstrings on test functions.
 ]
 
 [tool.ruff.lint.pydocstyle]
