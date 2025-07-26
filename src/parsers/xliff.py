@@ -4,6 +4,7 @@ Uses lxml.objectify to automatically convert XML to Python objects, providing si
 access to all elements and attributes while preserving perfect structure.
 """
 
+from collections.abc import Generator
 from typing import Self
 
 from lxml import etree, objectify
@@ -53,8 +54,8 @@ class XliffDocument:
         """Get default namespace from root attributes."""
         return self.root.attrib.get("xmlns")
 
-    def get_translation_units(self):
-        """Generator that yields all translation units in the document.
+    def get_translation_units(self) -> Generator[objectify.ObjectifiedElement]:
+        """Yield all translation units in the document.
 
         Yields:
             objectify elements representing trans-unit elements
@@ -63,8 +64,8 @@ class XliffDocument:
         for file_elem in self.root.file:
             yield from file_elem.body["trans-unit"]
 
-    def get_files(self):
-        """Generator that yields all file elements in the document.
+    def get_files(self) -> Generator[objectify.ObjectifiedElement]:
+        """Yield all file elements in the document.
 
         Yields:
             objectify elements representing file elements

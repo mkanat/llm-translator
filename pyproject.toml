@@ -45,3 +45,6 @@ extend-select = [
   "DTZ", # flake8-datetimez
   "RUF",  # Ruff-specific rules
 ]
+
+[tool.ruff.lint.pydocstyle]
+convention = "pep257"
