@@ -54,7 +54,9 @@ class XliffDocument:
         """Get default namespace from root attributes."""
         return self.root.nsmap.get(None)
 
-    def get_translation_units(self) ->Generator[objectify.ObjectifiedElement, None, None]:
+    def get_translation_units(
+        self,
+    ) -> Generator[objectify.ObjectifiedElement, None, None]:
         """Yield all translation units in the document.
 
         Yields:

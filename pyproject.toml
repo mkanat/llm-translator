@@ -32,7 +32,6 @@ extend-select = [
   "FBT", # flake8-boolean-trap
   "A",   # flake8-builtins
   "S",   # flake8-bandit
-  "COM", # flake8-commas
   "LOG", # flake8-logging
   "G",   # flake8-logging-format
   "TCH", # flake8-type-checking
