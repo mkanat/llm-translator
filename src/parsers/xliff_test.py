@@ -59,14 +59,14 @@ def test_sdlxliff_unit_special_markup(sdl_xliff_file_path: str):
     # Source emphasis tag
     assert units[0].source.text == "Hello, "
     g = units[0].source.getchildren()[0]
-    assert g.tag.split("}")[-1] == "g"  # pyright: ignore
+    assert etree.QName(g.tag).localname == "g"  # pyright: ignore
     assert g.attrib["ctype"] == "x-html-em"
     assert g.text == "world"
     assert g.tail == "!"
     # Target emphasis tag
     assert units[0].target.text == "¡Hola, "
     gt = units[0].target.getchildren()[0]
-    assert gt.tag.split("}")[-1] == "g"  # pyright: ignore
+    assert etree.QName(gt.tag).localname == "g"  # pyright: ignore
     assert gt.attrib["ctype"] == "x-html-em"
     assert gt.text == "mundo"
     assert gt.tail == "!"
