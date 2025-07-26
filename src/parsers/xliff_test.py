@@ -63,14 +63,46 @@ def test_to_file_roundtrip(xliff_file_path, tmp_path):
         assert str(u1.target) == str(u2.target)
 
 
-def test_from_sdl_file(sdl_xliff_file_path):
+def test_parse_sdlxliff(sdl_xliff_file_path):
     doc = XliffDocument.from_file(sdl_xliff_file_path)
-    assert doc is not None
     assert doc.version == "1.2"
     assert doc.xmlns == "urn:oasis:names:tc:xliff:document:1.2"
+
+    files = list(doc.get_files())
+    assert len(files) == 1
+    file_elem = files[0]
+    assert file_elem.attrib["original"] == "test.txt"
+    assert file_elem.attrib["source-language"] == "en-US"
+    assert file_elem.attrib["target-language"] == "es-ES"
+    assert file_elem.attrib["datatype"] == "x-sdlfilterframework2"
+
     units = list(doc.get_translation_units())
     assert len(units) == 2
-    assert units[0].source == '<source>Hello, <g id="1" ctype="x-html-em">world</g>!</source>'
-    assert units[0].target == '<target state="translated" origin="tm" match-quality="95">¡Hola, <g id="1" ctype="x-html-em">mundo</g>!</target>'
-    assert units[1].source == '<source>This is a test document with <g id="1" ctype="x-html-strong">formatting</g>.</source>'
-    assert units[1].target == '<target state="needs-translation"/>'
+
+    # First translation unit
+    u1 = units[0]
+    # Source with emphasis tag
+    assert u1.source.text == "Hello, "
+    g = u1.source.getchildren()[0]
+    assert g.tag.split("}")[-1] == "g"
+    assert g.attrib["ctype"] == "x-html-em"
+    assert g.text == "world"
+    assert g.tail == "!"
+    # Target with emphasis tag
+    assert u1.target.text == "¡Hola, "
+    gt = u1.target.getchildren()[0]
+    assert gt.tag.split("}")[-1] == "g"
+    assert gt.attrib["ctype"] == "x-html-em"
+    assert gt.text == "mundo"
+    assert gt.tail == "!"
+    assert str(u1.note) == "Greeting with emphasis"
+
+    alt = u1.find("alt-trans")
+    assert alt is not None
+    assert str(alt.source) == "Hello, world!"
+    assert str(alt.target) == "Hola mundo!"
+
+    # Second translation unit
+    u2 = units[1]
+    assert "This is a test document" in str(u2.source)
+    assert str(u2.target) == ""
