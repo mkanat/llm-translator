@@ -9,4 +9,7 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = ["ruff"]
+dev = [
+    "ruff",
+    "types-lxml>=2025.3.30",
+]
