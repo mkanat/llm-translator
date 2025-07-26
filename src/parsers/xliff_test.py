@@ -1,6 +1,6 @@
 import pytest
 import os
-from lxml import etree, objectify
+from lxml import etree
 
 from parsers.xliff import XliffDocument
 
@@ -82,6 +82,7 @@ def test_sdlxliff_first_unit_alt_trans(sdl_xliff_file_path):
     assert alt is not None
     assert str(alt.source) == "Hello, world!"
     assert str(alt.target) == "Hola mundo!"
+
 
 def test_to_file_roundtrip(xliff_file_path, tmp_path):
     doc = XliffDocument.from_file(xliff_file_path)
