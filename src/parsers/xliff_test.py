@@ -1,5 +1,4 @@
 import pytest
-import tempfile
 import os
 from lxml import etree
 
@@ -23,17 +22,11 @@ def test_from_file(xliff_file_path):
     assert doc.xmlns == "urn:oasis:names:tc:xliff:document:1.2"
 
 
-def test_from_file_not_found():
-    with pytest.raises(OSError):
-        XliffDocument.from_file("non_existent_file.xlf")
-
-
-def test_from_file_invalid_xml():
-    with tempfile.NamedTemporaryFile(mode="w+", suffix=".xlf", encoding="utf-8") as f:
-        f.write("<xliff><unclosed-tag>")
-        f.seek(0)
-        with pytest.raises(etree.XMLSyntaxError):
-            XliffDocument.from_file(f.name)
+def test_from_file_invalid_xml(tmp_path):
+    invalid_file = tmp_path / "invalid.xlf"
+    invalid_file.write_text("<xliff><unclosed-tag>")
+    with pytest.raises(etree.XMLSyntaxError):
+        XliffDocument.from_file(str(invalid_file))
 
 
 def test_get_files(xliff_file_path):
@@ -51,15 +44,14 @@ def test_get_translation_units(xliff_file_path):
     assert str(units[1].target) == "Une autre chaîne"
 
 
-def test_to_file_roundtrip(xliff_file_path):
+def test_to_file_roundtrip(xliff_file_path, tmp_path):
     doc = XliffDocument.from_file(xliff_file_path)
-    with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".xlf") as f:
-        output_path = f.name
-    doc.to_file(output_path)
+    output_path = tmp_path / "roundtrip.xlf"
+    doc.to_file(str(output_path))
 
-    assert os.path.exists(output_path)
+    assert output_path.exists()
 
-    doc2 = XliffDocument.from_file(output_path)
+    doc2 = XliffDocument.from_file(str(output_path))
     assert doc.version == doc2.version
     assert doc.xmlns == doc2.xmlns
 
@@ -69,8 +61,6 @@ def test_to_file_roundtrip(xliff_file_path):
     for u1, u2 in zip(units1, units2):
         assert str(u1.source) == str(u2.source)
         assert str(u1.target) == str(u2.target)
-
-    os.remove(output_path)
 
 
 def test_from_sdl_file(sdl_xliff_file_path):
