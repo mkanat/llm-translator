@@ -1,6 +1,7 @@
 import pytest
 import os
-from lxml import etree
+from io import BytesIO
+from lxml import etree, objectify
 
 from parsers.xliff import XliffDocument
 
@@ -44,25 +45,6 @@ def test_get_translation_units(xliff_file_path):
     assert str(units[1].target) == "Une autre chaîne"
 
 
-def test_to_file_roundtrip(xliff_file_path, tmp_path):
-    doc = XliffDocument.from_file(xliff_file_path)
-    output_path = tmp_path / "roundtrip.xlf"
-    doc.to_file(str(output_path))
-
-    assert output_path.exists()
-
-    doc2 = XliffDocument.from_file(str(output_path))
-    assert doc.version == doc2.version
-    assert doc.xmlns == doc2.xmlns
-
-    units1 = list(doc.get_translation_units())
-    units2 = list(doc2.get_translation_units())
-    assert len(units1) == len(units2)
-    for u1, u2 in zip(units1, units2):
-        assert str(u1.source) == str(u2.source)
-        assert str(u1.target) == str(u2.target)
-
-
 def test_sdlxliff_basic_metadata(sdl_xliff_file_path):
     doc = XliffDocument.from_file(sdl_xliff_file_path)
     assert doc.version == "1.2"
@@ -101,3 +83,48 @@ def test_sdlxliff_first_unit_alt_trans(sdl_xliff_file_path):
     assert alt is not None
     assert str(alt.source) == "Hello, world!"
     assert str(alt.target) == "Hola mundo!"
+
+def test_to_file_roundtrip(xliff_file_path, tmp_path):
+    doc = XliffDocument.from_file(xliff_file_path)
+    output_path = tmp_path / "roundtrip.xlf"
+    doc.to_file(str(output_path))
+
+    assert output_path.exists()
+
+    doc2 = XliffDocument.from_file(str(output_path))
+    assert doc.version == doc2.version
+    assert doc.xmlns == doc2.xmlns
+
+    units1 = list(doc.get_translation_units())
+    units2 = list(doc2.get_translation_units())
+    assert len(units1) == len(units2)
+    for u1, u2 in zip(units1, units2):
+        assert str(u1.source) == str(u2.source)
+        assert str(u1.target) == str(u2.target)
+
+
+def _canonical_xml(root):
+    """
+    Return a canonical XML (C14N) byte string for the given objectify root,
+    removing objectify annotations.
+    """
+    objectify.deannotate(root, cleanup_namespaces=True)
+    tree = root.getroottree()
+    buf = BytesIO()
+    # include comments and use the existing docinfo
+    tree.write(buf, with_comments=True, method="c14n")
+    return buf.getvalue()
+
+
+def test_to_file_roundtrip_xml_identical(xliff_file_path, tmp_path):
+    """
+    Ensure that writing and re-reading produces an identical canonical XML tree.
+    """
+    doc = XliffDocument.from_file(xliff_file_path)
+    output_path = tmp_path / "canonical_roundtrip.xlf"
+    doc.to_file(str(output_path))
+
+    doc2 = XliffDocument.from_file(str(output_path))
+    xml1 = _canonical_xml(doc.root)
+    xml2 = _canonical_xml(doc2.root)
+    assert xml1 == xml2, "Canonical XML differs after roundtrip"
