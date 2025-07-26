@@ -14,3 +14,37 @@ dev = [
     "ruff",
     "types-lxml>=2025.3.30",
 ]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+
+[tool.ruff.lint]
+extend-select = [
+  "W",  # pycodestyle warnings
+  "I",  # isort
+  "N",  # pep8-naming
+  "D",  # pydocstyle
+  "UP", # pyupgrade
+  "C4",  # flake8-comprehensions
+  "B",   # flake8-bugbear
+  "BLE", # flake8-blind-except
+  "FBT", # flake8-boolean-trap
+  "A",   # flake8-builtins
+  "S",   # flake8-bandit
+  "COM", # flake8-commas
+  "LOG", # flake8-logging
+  "G",   # flake8-logging-format
+  "TCH", # flake8-type-checking
+  "ICN", # flake8-import-conventions
+  "SIM", # flake8-simplify
+  "PT",  # flake8-pytest-style
+  "YTT", # flake8-2020
+  "PIE", # flake8-pie
+  "RET", # flake8-return
+  "ARG", # flake8-unused-arguments
+  "DTZ", # flake8-datetimez
+  "RUF",  # Ruff-specific rules
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "pep257"
