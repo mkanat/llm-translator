@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 import pytest
@@ -8,13 +7,13 @@ from parsers.xliff import XliffDocument
 
 
 @pytest.fixture
-def xliff_file_path() -> str:
-    return os.path.join(os.path.dirname(__file__), "testdata", "basic.xlf")
+def xliff_file_path() -> Path:
+    return Path(__file__).parent / "testdata" / "basic.xlf"
 
 
 @pytest.fixture
-def sdl_xliff_file_path() -> str:
-    return os.path.join(os.path.dirname(__file__), "testdata", "test_sample.sdlxliff")
+def sdl_xliff_file_path() -> Path:
+    return Path(__file__).parent / "testdata" / "test_sample.sdlxliff"
 
 
 def test_from_file(xliff_file_path: str):
@@ -72,7 +71,7 @@ def test_sdlxliff_unit_special_markup(sdl_xliff_file_path: str):
     assert gt.text == "mundo"
     assert gt.tail == "!"
     # Note element
-    assert str(units[0].note) == "Greeting with emphasis"
+    assert units[0].note.text == "Greeting with emphasis"
 
 
 def test_sdlxliff_first_unit_alt_trans(sdl_xliff_file_path: str):
