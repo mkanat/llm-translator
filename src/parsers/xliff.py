@@ -5,7 +5,7 @@ access to all elements and attributes while preserving perfect structure.
 """
 
 from collections.abc import Generator
-from typing import Self
+from typing import Optional, Self
 
 from lxml import etree, objectify
 
@@ -50,9 +50,9 @@ class XliffDocument:
         return self.root.attrib.get("version")
 
     @property
-    def xmlns(self) -> str | None:
+    def xmlns(self) -> Optional[str]:
         """Get default namespace from root attributes."""
-        return self.root.attrib.get("xmlns")
+        return self.root.nsmap.get(None)
 
     def get_translation_units(self) ->Generator[objectify.ObjectifiedElement, None, None]:
         """Yield all translation units in the document.
