@@ -59,14 +59,14 @@ def test_sdlxliff_unit_special_markup(sdl_xliff_file_path: str):
     # Source emphasis tag
     assert units[0].source.text == "Hello, "
     g = units[0].source.getchildren()[0]
-    assert g.tag.split("}")[-1] == "g" # pyright: ignore
+    assert g.tag.split("}")[-1] == "g"  # pyright: ignore
     assert g.attrib["ctype"] == "x-html-em"
     assert g.text == "world"
     assert g.tail == "!"
     # Target emphasis tag
     assert units[0].target.text == "¡Hola, "
     gt = units[0].target.getchildren()[0]
-    assert gt.tag.split("}")[-1] == "g" # pyright: ignore
+    assert gt.tag.split("}")[-1] == "g"  # pyright: ignore
     assert gt.attrib["ctype"] == "x-html-em"
     assert gt.text == "mundo"
     assert gt.tail == "!"
@@ -104,7 +104,7 @@ def test_to_file_roundtrip(xliff_file_path: str, tmp_path: Path):
         assert str(u1.target) == str(u2.target)
 
 
-def _canonical_xml(tree: etree._ElementTree): # pyright: ignore [reportPrivateUsage]
+def _canonical_xml(tree: etree._ElementTree):  # pyright: ignore [reportPrivateUsage]
     return etree.tostring(
         tree,
         method="c14n2",
