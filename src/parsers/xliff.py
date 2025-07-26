@@ -4,8 +4,7 @@ Uses lxml.objectify to automatically convert XML to Python objects, providing si
 access to all elements and attributes while preserving perfect structure.
 """
 
-from collections.abc import Generator
-from typing import Self
+from typing import Generator, Self
 
 from lxml import etree, objectify
 
