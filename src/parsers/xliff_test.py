@@ -96,8 +96,8 @@ def test_sdlxliff_first_unit_alt_trans(sdl_xliff_file_path):
     doc = XliffDocument.from_file(sdl_xliff_file_path)
     units = list(doc.get_translation_units())
     assert len(units) == 2
-    # Alternative translations block
-    alt = next((e for e in units[0].getchildren() if e.tag.split("}")[-1] == "alt-trans"), None)
+    # Alternative translations block via objectify item access
+    alt = units[0]["alt-trans"]
     assert alt is not None
     assert str(alt.source) == "Hello, world!"
     assert str(alt.target) == "Hola mundo!"
