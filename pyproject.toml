@@ -9,4 +9,8 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = ["ruff"]
+dev = [
+    "pyright[nodejs]>=1.1.403",
+    "ruff",
+    "types-lxml>=2025.3.30",
+]
